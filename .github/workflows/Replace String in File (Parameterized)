@@ -1,0 +1,37 @@
+name: Replace String in File (Parameterized)
+
+on:
+  workflow_dispatch:
+    inputs:
+      file_path:
+        description: 'Path to the file'
+        required: true
+        type: string
+      old_string:
+        description: 'String to be replaced'
+        required: true
+        type: string
+      new_string:
+        description: 'New string to replace with'
+        required: true
+        type: string
+
+jobs:
+  replace-string:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Replace String in File
+        run: |
+          sed -i 's/${{ inputs.old_string }}/${{ inputs.new_string }}/g' ${{ inputs.file_path }}
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add ${{ inputs.file_path }}
+          git commit -m "Replaced '${{ inputs.old_string }}' with '${{ inputs.new_string }}'"
+          git push
